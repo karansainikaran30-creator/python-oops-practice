@@ -1,0 +1,121 @@
+class MissingValueHandler:
+
+    def __init__(self, data):
+        self.data = data
+        self.cleaned_data = None
+
+    # Step 6: Input Validation
+    def validate_input(self):
+        if not isinstance(self.data, list):
+            raise ValueError("Input must be a list.")
+
+        if len(self.data) == 0:
+            raise ValueError("Input list cannot be empty.")
+
+        for value in self.data:
+            if value is not None and not isinstance(value, (int, float)):
+                raise ValueError("Dataset contains invalid values.")
+
+    # Step 7: Find Missing Indexes
+    def find_missing_indexes(self):
+        indexes = []
+
+        for i in range(len(self.data)):
+            if self.data[i] is None:
+                indexes.append(i)
+
+        return indexes
+
+    # Step 8: Count Missing Values
+    def count_missing_values(self):
+        count = 0
+
+        for value in self.data:
+            if value is None:
+                count += 1
+
+        return count
+
+    # Step 9: Calculate Mean
+    def calculate_mean(self):
+        total = 0
+        count = 0
+
+        for value in self.data:
+            if value is not None:
+                total += value
+                count += 1
+
+        if count == 0:
+            raise ValueError("No valid values exist to calculate the mean.")
+
+        mean = total / count
+
+        return mean
+
+    # Step 10 & 11: Fill Missing Values
+    def fill_missing_values(self):
+        mean = self.calculate_mean()
+
+        # Create a separate copy
+        self.cleaned_data = self.data.copy()
+
+        for i in range(len(self.cleaned_data)):
+            if self.cleaned_data[i] is None:
+                self.cleaned_data[i] = mean
+
+        return self.cleaned_data
+
+    # Step 12: Display Report
+    def display_report(self):
+
+        missing_indexes = self.find_missing_indexes()
+        missing_values = self.count_missing_values()
+        mean = self.calculate_mean()
+        cleaned_data = self.fill_missing_values()
+
+        available_values = len(self.data) - missing_values
+
+        print("========================================")
+        print("         MISSING VALUE REPORT")
+        print("========================================")
+
+        print("Original Data:")
+        print(self.data)
+
+        print("Total Values :", len(self.data))
+        print("Missing Values :", missing_values)
+        print("Missing Indexes :", missing_indexes)
+        print("Available Values :", available_values)
+        print("Mean :", mean)
+
+        print("Cleaned Data:")
+        print(cleaned_data)
+
+        print("========================================")
+
+
+# Step 13: Main Function
+def main():
+
+    # Step 14: Dataset
+    data = [25, 30, None, 40, None, 35, 28]
+
+    try:
+
+        # Step 15: Create Object
+        obj = MissingValueHandler(data)
+
+        # Step 16: Validate
+        obj.validate_input()
+
+        # Step 17: Generate Report
+        obj.display_report()
+
+    except ValueError as error:
+        print("Error:", error)
+
+
+# Step 19: Program Entry Point
+if __name__ == "__main__":
+    main()
